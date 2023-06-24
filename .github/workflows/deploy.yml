@@ -5,7 +5,7 @@ on:
       - published
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: IvanValentini/caronte
+  IMAGE_NAME: ivanvalentini/caronte
 jobs:
   build_push_docker:
     runs-on: ubuntu-latest
