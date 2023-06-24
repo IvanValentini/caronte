@@ -110,7 +110,7 @@ class StreamsPane extends Component {
             case "http-response":
                 const contentType = getHeaderValue(m, "Content-Type");
                 let body = m.body;
-                if (contentType && contentType.includes("application/json")) {
+                if (contentType && contentType.includes("application/json") && false) {
                     try {
                         const json = JSON.parse(m.body);
                         if (typeof json === "object") {
