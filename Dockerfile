@@ -1,13 +1,28 @@
 # Build backend with go
 FROM golang:1.16 AS BACKEND_BUILDER
 
+WORKDIR /
+
 # Install tools and libraries
 RUN apt-get update && \
 	DEBIAN_FRONTEND=noninteractive apt-get install -qq \
 	git \
 	pkg-config \
 	libpcap-dev \
-	libhyperscan-dev
+	$(if [ "$(dpkg --print-architecture)" = "amd64" ]; then echo "libhyperscan-dev"; fi)
+
+# Perform git pull for arm64 architecture and add vectorscan to path
+RUN if [ "$(dpkg --print-architecture)" = "arm64" ]; then \
+	DEBIAN_FRONTEND=noninteractive apt-get install -qq git g++ cmake libboost-all-dev ragel && \
+	git clone https://github.com/VectorCamp/vectorscan.git && \
+	cd vectorscan && \
+	git checkout feature/add-arm-support && \
+	cmake -G"Unix Makefiles" && \
+	make -j8 . && \
+	make install; \
+	fi
+
+ENV PKG_CONFIG_PATH="${PKG_CONFIG_PATH}:/vectorscan"
 
 WORKDIR /caronte
 
@@ -27,7 +42,7 @@ WORKDIR /caronte-frontend
 
 COPY ./frontend ./
 
-RUN yarn install && yarn build --production=true
+RUN yarn install --network-timeout 600000 && yarn build --production=true
 
 
 # LAST STAGE
