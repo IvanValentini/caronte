@@ -22,7 +22,7 @@ RUN if [ "$(dpkg --print-architecture)" = "arm64" ]; then \
 	make install; \
 	fi
 
-ENV PKG_CONFIG_PATH="${PKG_CONFIG_PATH}:/vectorscan"
+#ENV PKG_CONFIG_PATH="${PKG_CONFIG_PATH}:/vectorscan"
 
 WORKDIR /caronte
 
